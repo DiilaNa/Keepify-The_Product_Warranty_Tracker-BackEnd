@@ -3,8 +3,11 @@ import { Request, Response } from "express"
 import { Role, Status, User } from "../model/User";
 import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "../utils/token";
+import jwt from "jsonwebtoken"
 
 dotenv.config()
+
+const JWT_REFRESH = process.env.JWT_REFRESH as string
 
 export const register = async(req:Request,res:Response) =>{
     try{
@@ -90,4 +93,27 @@ export const login = async(req: Request,res:Response) =>{
         })
     }
 
+}
+
+export const handleRefreshToken = async(req:Request,res:Response) => {
+    try{
+        const{token} = req.body
+
+        if(!token){
+            return res.status(400).json({message:"Token Expired"})
+        }
+
+        const payload = jwt.verify(token,JWT_REFRESH)
+        const user = await User.findById(payload.sub)
+
+        if(!user){
+            return res.status(403).json({message:"Invalid Refresh Token"})
+        }
+
+        const accessToken = signAccessToken(user)
+        res.status(200).json({accessToken})
+
+    }catch(err:any){
+        res.status(403).json({message:"Invalid or Expired Token"})
+    }
 }

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../middleware/auth";
 import { authorizeRoles } from "../middleware/roles";
 import { Role } from "../model/User";
-import { save_announcement } from "../controller/admin.controller";
+import { save_announcement } from "../controller/announcement.controller";
 import {upload} from "../middleware/upload"
 
 const announcementsRouter = Router();

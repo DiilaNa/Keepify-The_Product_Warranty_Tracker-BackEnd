@@ -2,11 +2,10 @@ import { Response } from "express";
 import { AuthRequest } from "../middleware/auth";
 import cloudinary from "../config/cloudinary";
 import { Announcement, AnnouncementStatus } from "../model/Announcements";
+import { Category } from "../model/Category";
 
 export const save_announcement = async(req:AuthRequest,res:Response) => {
     try{
-
-        // check if user is authenticated
         if(!req.user){
             return res.status(401).json({message:"Unauthorized"})
         }
@@ -51,3 +50,5 @@ export const save_announcement = async(req:AuthRequest,res:Response) => {
         res.status(500).json({message:"Error saving announcement",error: error?.message})
     }
 }
+
+  

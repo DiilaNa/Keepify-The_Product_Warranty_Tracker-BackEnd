@@ -6,6 +6,7 @@ import cors from "cors"
 import auth from "./routes/auth.routes"
 import announcementsRouter from "./routes/announcements.routes";
 import categoriesRouter from "./routes/category.routes";
+import brandsRouter from "./routes/brands.routes";
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.use(cors({
 app.use("/api/v1/auth",auth)
 app.use("/api/v1/announcements",announcementsRouter)
 app.use("/api/v1/categories", categoriesRouter)
+app.use("/api/v1/brands", brandsRouter)
 
 mongoose
 .connect(MONGO_URI)

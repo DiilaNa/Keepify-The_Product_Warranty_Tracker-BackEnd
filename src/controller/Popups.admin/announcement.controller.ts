@@ -1,8 +1,8 @@
 import { Response } from "express";
-import { AuthRequest } from "../middleware/auth";
-import cloudinary from "../config/cloudinary";
-import { Announcement, AnnouncementStatus } from "../model/Announcements";
-import { Category } from "../model/Category";
+import { AuthRequest } from "../../middleware/auth";
+import cloudinary from "../../config/cloudinary";
+import { Announcement, AnnouncementStatus } from "../../model/Announcements";
+import { Category } from "../../model/Category";
 
 export const save_announcement = async(req:AuthRequest,res:Response) => {
     try{
@@ -51,4 +51,3 @@ export const save_announcement = async(req:AuthRequest,res:Response) => {
     }
 }
 
-  

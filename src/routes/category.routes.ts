@@ -3,7 +3,7 @@ import { authenticate } from "../middleware/auth";
 import { authorizeRoles } from "../middleware/roles";
 import { Role } from "../model/User";
 import {upload} from "../middleware/upload"
-import { save_category } from "../controller/category.controller";
+import { save_category } from "../controller/Popups.admin/category.controller";
 
 const categoriesRouter = Router();
 

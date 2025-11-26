@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-
 export enum Role{
     ADMIN = "ADMIN",
     USER = "USER"

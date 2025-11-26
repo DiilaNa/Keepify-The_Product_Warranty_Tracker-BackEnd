@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { AuthRequest } from "../middleware/auth";
-import { Brand } from "../model/Brand";
+import { AuthRequest } from "../../middleware/auth";
+import { Brand } from "../../model/Brand";
 // import cloudinary from "../config/cloudinary";
 
 export const save_brand =async(req:AuthRequest,res:Response) => {

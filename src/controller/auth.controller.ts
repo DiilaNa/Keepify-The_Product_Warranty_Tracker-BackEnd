@@ -4,7 +4,6 @@ import { Role, Status, User } from "../model/User";
 import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "../utils/token";
 import jwt from "jsonwebtoken"
-import { error } from "console";
 import { AuthRequest } from "../middleware/auth";
 
 dotenv.config()

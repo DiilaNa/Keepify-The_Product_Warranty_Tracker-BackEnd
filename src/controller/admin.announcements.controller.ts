@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { Announcement} from "../model/Announcements";
+import { Announcement, AnnouncementStatus} from "../model/Announcements";
 import { AuthRequest } from "../middleware/auth";
 import cloudinary from "../config/cloudinary";
 import { Category } from "../model/Category";
@@ -91,3 +91,32 @@ export const editAnnouncements = async(req: AuthRequest, res: Response) => {
         })
     }
 }    
+
+export const updateAnnouncementStatus = async (req: AuthRequest, res: Response) => {
+     try {
+        const announcementId = req.params.id;
+
+        const existing = await Announcement.findById(announcementId);
+        if (!existing) {
+            return res.status(404).json({
+                message: "Announcement not found"
+            });
+        }
+
+        const newStatus = existing.status === AnnouncementStatus.PUBLISHED ? AnnouncementStatus.UNPUBLISHED : AnnouncementStatus.PUBLISHED;
+
+        existing.status = newStatus;
+        await existing.save();
+
+        res.status(200).json({
+            message: `Announcement is now ${newStatus}`,
+            data: existing
+        });
+
+    } catch (error: any) {
+        res.status(500).json({
+            message: "Error toggling announcement status",
+            error: error.message
+        });
+    }
+};

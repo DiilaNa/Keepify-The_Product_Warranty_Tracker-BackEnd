@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../../middleware/auth";
 import { Brand } from "../../model/Brand";
+import { Category } from "../../model/Category";
 // import cloudinary from "../config/cloudinary";
 
 export const save_brand =async(req:AuthRequest,res:Response) => {
@@ -28,6 +29,13 @@ export const save_brand =async(req:AuthRequest,res:Response) => {
         //     })
         //     imageURl = result.secure_url;
         // }
+
+        const categoryDoc = await Category.findOne({name:category});
+
+         if (!categoryDoc) {
+                return res.status(400).json({ message: "Invalid category selected" });
+            }
+
 
         const newBrand = new Brand({
             category,

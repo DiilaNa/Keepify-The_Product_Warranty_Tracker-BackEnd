@@ -1,6 +1,11 @@
 import { Response } from "express";
 import { User } from "../model/User";
 import { AuthRequest } from "../middleware/auth";
+import { Category } from "../model/Category";
+import { Brand } from "../model/Brand";
+import { Announcement } from "../model/Announcements";
+import { Role } from "../model/User";
+import { AnnouncementStatus } from "../model/Announcements";
 
 export const loadUserDetails = async(req: AuthRequest, res: Response) => {
     try{
@@ -32,3 +37,56 @@ export const loadUserDetails = async(req: AuthRequest, res: Response) => {
         })
     }
 }
+
+export const getAdminDashboardStats = async (req: AuthRequest, res: Response) => {
+    try {
+        // --- USERS ---
+        const totalUsers = await User.countDocuments({});
+        const totalAdmins = await User.countDocuments({ role: Role.ADMIN });
+        const totalNormalUsers = await User.countDocuments({ role: Role.USER });
+
+        // --- CATEGORIES ---
+        const totalCategories = await Category.countDocuments({});
+
+        // --- BRANDS ---
+        const totalBrands = await Brand.countDocuments({});
+
+        // --- ANNOUNCEMENTS ---
+        const totalAnnouncements = await Announcement.countDocuments({});
+        const publishedAnnouncements = await Announcement.countDocuments({
+            status: AnnouncementStatus.PUBLISHED
+        });
+        const unpublishedAnnouncements = await Announcement.countDocuments({
+            status: AnnouncementStatus.UNPUBLISHED
+        });
+
+        return res.status(200).json({
+            message: "Admin Dashboard Stats fetched successfully",
+            data: {
+                users: {
+                    totalUsers,
+                    totalAdmins,
+                    totalNormalUsers
+                },
+                categories: {
+                    totalCategories
+                },
+                brands: {
+                    totalBrands
+                },
+                announcements: {
+                    totalAnnouncements,
+                    publishedAnnouncements,
+                    unpublishedAnnouncements
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error("Admin Dashboard Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+    }
+};

@@ -3,7 +3,7 @@ import { adminRegister, handleRefreshToken, login, register } from "../controlle
 import { authenticate } from "../middleware/auth";
 import { authorizeRoles } from "../middleware/roles";
 import { Role } from "../model/User";
-import { loadUserDetails } from "../controller/admin.controller";
+import { getAdminDashboardStats, loadUserDetails } from "../controller/admin.controller";
 
 const router = Router();
 
@@ -15,6 +15,6 @@ router.post("/refresh",handleRefreshToken)
 // protected as admin only
 router.post("/admin/register",authenticate,authorizeRoles([Role.ADMIN]),adminRegister)
 router.get("/admin/loadUsers",authenticate,authorizeRoles([Role.ADMIN]),loadUserDetails)
-
+router.get("/admin/dashboard-stats", authenticate, authorizeRoles([Role.ADMIN]), getAdminDashboardStats);
 
 export default router;

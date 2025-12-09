@@ -53,4 +53,23 @@ export const save_brand =async(req:AuthRequest,res:Response) => {
     }catch(error:any){
         res.status(500).json({message:"Error saving brand",error: error?.message})
     }
-}  
+}
+
+export const get_category_to_combo = async(req:AuthRequest,res:Response) => {
+    try{
+        const categories = await Category.find({}, { name: 1 }) 
+          .sort({ name: 1 });
+
+        res.status(200).json({
+          success: true,
+          message: "loading succeessfull",
+          data: categories,
+        });
+
+    }catch(err:any){
+        res.status(500).json({
+            message:"Error loading",
+            err:err?.message
+        })
+    }
+} 

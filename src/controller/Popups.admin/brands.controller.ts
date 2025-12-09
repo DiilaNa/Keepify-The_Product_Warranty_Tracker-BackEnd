@@ -30,7 +30,7 @@ export const save_brand =async(req:AuthRequest,res:Response) => {
         //     imageURl = result.secure_url;
         // }
 
-        const categoryDoc = await Category.findOne({name:category});
+        const categoryDoc = await Category.findById(category);
 
          if (!categoryDoc) {
                 return res.status(400).json({ message: "Invalid category selected" });

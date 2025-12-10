@@ -10,7 +10,7 @@ const categoriesRouter = Router();
 
 
 categoriesRouter.post("/saveCategory", authenticate, authorizeRoles([Role.ADMIN]),upload.single("image"), save_category)
-categoriesRouter.get("/loadCategoriesInCombo",authenticate,authorizeRoles([Role.ADMIN]),get_category_to_combo)
+categoriesRouter.get("/loadCategoriesInCombo",authenticate,get_category_to_combo)
 
 
 export default categoriesRouter;

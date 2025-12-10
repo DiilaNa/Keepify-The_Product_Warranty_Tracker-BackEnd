@@ -66,3 +66,25 @@ export const save_warranty= async(req:AuthRequest,res:Response) => {
         res.status(500).json({message:"Error saving Warranty",error: error?.message})
     }
 }
+
+export const get_brands_by_category = async (req:AuthRequest, res:Response) => {
+  try {
+    const { category } = req.params;
+
+    const brands = await Brand.find(
+      { category: category },
+      { brand_name: 1, category: 1 }
+    ).sort({ brand_name: 1 });
+
+    res.status(200).json({
+      success: true,
+      data: brands,
+    });
+  } catch (err:any) {
+    res.status(500).json({
+      message: "Error loading brands",
+      error: err?.message,
+    });
+  }
+};
+  

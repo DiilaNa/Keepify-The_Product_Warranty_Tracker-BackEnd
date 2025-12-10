@@ -11,7 +11,15 @@ export const save_warranty= async(req:AuthRequest,res:Response) => {
             return res.status(401).json({message:"Unauthorized"})
         }
 
-        const {name, purchase_date, expiry_date,description,serial_number,category,brand} = req.body
+        const {
+          name,
+          purchase_date,
+          expiry_date,
+          description,
+          serial_number,
+          category,
+          brandId,
+        } = req.body;
         let imageURl = "";
 
         if(req.file){
@@ -32,13 +40,13 @@ export const save_warranty= async(req:AuthRequest,res:Response) => {
         }
 
         // Find Category ID
-        const categoryDoc = await Category.findOne({ name: category });
+        const categoryDoc = await Category.findById(category);
             if (!categoryDoc) {
                 return res.status(400).json({ message: "Invalid category selected" });
             }
 
         // Find Brand ID
-        const brandDoc = await Brand.findOne({ brand_name: brand });
+        const brandDoc = await Brand.findById(brandId);
             if (!brandDoc) {
                 return res.status(400).json({ message: "Invalid brand selected" });
             }

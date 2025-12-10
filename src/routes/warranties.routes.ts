@@ -9,7 +9,13 @@ import { viewWarranty } from "../controller/popups.user/viewBill.controller";
 
 const warrantyRouter = Router();
 
-warrantyRouter.post("/saveWarranty", authenticate, authorizeRoles([Role.USER]),upload.single("image"),save_warranty)
+warrantyRouter.post(
+  "/saveWarranty",
+  authenticate,
+  authorizeRoles([Role.USER]),
+  upload.single("bill_image"),
+  save_warranty
+);
 warrantyRouter.get("/loadwarranties",authenticate,authorizeRoles([Role.USER]),loadWarrantyPosts)
 warrantyRouter.get("/view/:id", authenticate, authorizeRoles([Role.USER]),viewWarranty);
 warrantyRouter.get("/dashboard-stats", authenticate, authorizeRoles([Role.USER]), getWarrantyDashboardStats);

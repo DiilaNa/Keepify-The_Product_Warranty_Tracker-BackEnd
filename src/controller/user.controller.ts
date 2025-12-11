@@ -12,7 +12,7 @@ export const loadWarrantyPosts = async(req: AuthRequest, res: Response) => {
         const posts = await Warranty.find({ ownerId: req.user.sub })
           .populate({
             path: "category",
-            select: "name image_url", // only get name and image_url
+            select: "name image_url", 
           })
           .sort({ createdAt: -1 })
           .skip(skip)

@@ -14,7 +14,6 @@ export const loadUserDetails = async(req: AuthRequest, res: Response) => {
         const skip = (page - 1) * limit;
 
         const posts = await User.find()
-        .populate("firstname","email")
         .sort({createdAt: -1})
         .skip(skip)
         .limit(limit);

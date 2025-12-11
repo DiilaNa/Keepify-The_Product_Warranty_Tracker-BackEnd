@@ -10,12 +10,15 @@ export const loadWarrantyPosts = async(req: AuthRequest, res: Response) => {
         const skip = (page - 1) * limit;
 
         const posts = await Warranty.find({ ownerId: req.user.sub })
-        .populate("name","description")
-        .sort({createdAt: -1})
-        .skip(skip)
-        .limit(limit);
+          .populate({
+            path: "category",
+            select: "name image_url", // only get name and image_url
+          })
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit);
 
-        const total = await Warranty.countDocuments();
+        const total = await Warranty.countDocuments({ ownerId: req.user.sub });
         const totalPages = Math.ceil(total / limit);
         
         res.status(200).json({

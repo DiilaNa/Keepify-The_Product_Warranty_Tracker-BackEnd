@@ -7,35 +7,88 @@ import { Announcement } from "../model/Announcements";
 import { Role } from "../model/User";
 import { AnnouncementStatus } from "../model/Announcements";
 
-export const loadUserDetails = async(req: AuthRequest, res: Response) => {
-    try{
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 10;
-        const skip = (page - 1) * limit;
+// export const loadUserDetails = async(req: AuthRequest, res: Response) => {
+//     try{
+//         const page = parseInt(req.query.page as string) || 1;
+//         const limit = parseInt(req.query.limit as string) || 10;
+//         const skip = (page - 1) * limit;
+//         const search = (req.query.search as string) || ""
 
-        const posts = await User.find()
-        .sort({createdAt: -1})
-        .skip(skip)
-        .limit(limit);
+//         const searchQuery = search ? {
+//             $0r: [
+//                 {firstname: {$regex: search,$options: "i"}},
+//                 {lastname: {$regex: search,$options: "i"}},
+//                 {email: {$regex: search,$options: "i"}},
+//             ],
+//         }
+//         :{};
 
-        const total = await User.countDocuments();
-        const totalPages = Math.ceil(total / limit);
+//         const posts = await User.find(searchQuery)
+//         .sort({createdAt: -1})
+//         .skip(skip)
+//         .limit(limit);
+
+//         const total = await User.countDocuments(searchQuery);
+//         const totalPages = Math.ceil(total / limit);
         
-        res.status(200).json({
-            message:"User Details fetched successfully in admin page",
-            data:posts,
-            page,
-            totalPages,
-            totalUsers: total
-        })
+//         res.status(200).json({
+//             message:"User Details fetched successfully in admin page",
+//             data:posts,
+//             page,
+//             totalPages,
+//             totalUsers: total
+//         })
 
-    }catch(error:any){
-        res.status(500).json({
-            message:"Error in Fetching User Details in admin page",
-            error: error?.message
-        })
-    }
-}
+//     }catch(error:any){
+//         res.status(500).json({
+//             message:"Error in Fetching User Details in admin page",
+//             error: error?.message
+//         })
+//     }
+// }
+
+export const loadUserDetails = async (req: AuthRequest, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string)?.trim() || ""; // <-- safe access
+    const skip = (page - 1) * limit;
+
+    // Build Mongo query
+    const query = search
+      ? {
+          $or: [
+            { firstname: { $regex: search, $options: "i" } },
+            { lastname: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const users = await User.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await User.countDocuments(query);
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+      message: "User Details fetched successfully",
+      data: users,
+      page,
+      totalPages,
+      totalUsers: total,
+    });
+  } catch (error: any) {
+    console.error("Error fetching users:", error); // <-- log for debugging
+    res.status(500).json({
+      message: "Error in Fetching User Details in admin page",
+      error: error?.message,
+    });
+  }
+};
+  
 
 export const getAdminDashboardStats = async (req: AuthRequest, res: Response) => {
     try {

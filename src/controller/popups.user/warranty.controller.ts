@@ -98,6 +98,7 @@ export const get_brands_by_category = async (
     });
   }
 };
+
 export const update_warranty = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
@@ -143,7 +144,6 @@ export const update_warranty = async (req: AuthRequest, res: Response) => {
 
     await warranty.save();
 
-    /* ---------- 🔥 POPULATE BEFORE RESPONSE ---------- */
     const populatedWarranty = await Warranty.findById(warranty._id)
       .populate("category")
       .populate("brandId");
@@ -160,4 +160,26 @@ export const update_warranty = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const delete_warranty = async (req: AuthRequest, res: Response) => {};
+export const delete_warranty = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { id } = req.params;
+
+    const warranty = await Warranty.findOneAndUpdate(
+      { _id: id, ownerId: req.user.sub },
+      { status: WarrantyStatus.DELETED },
+      { new: true }
+    );
+
+    if (!warranty) {
+      return res.status(404).json({ message: "Warranty not found" });
+    }
+
+    res.json({ message: "Warranty deleted successfully" });
+  } catch (error: any) {
+    res.status(500).json({ message: "Delete failed", error: error.message });
+  }
+};

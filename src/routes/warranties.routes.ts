@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../middleware/auth";
 import { authorizeRoles } from "../middleware/roles";
 import { Role } from "../model/User";
-import { save_warranty, update_warranty } from "../controller/popups.user/warranty.controller";
+import { delete_warranty, save_warranty, update_warranty } from "../controller/popups.user/warranty.controller";
 import {upload} from "../middleware/upload"
 import { getWarrantyDashboardStats, loadWarrantyPosts, searchWarranties } from "../controller/user.controller";
 import { viewWarranty } from "../controller/popups.user/viewBill.controller";
@@ -26,5 +26,12 @@ warrantyRouter.put(
   authorizeRoles([Role.USER]),
   upload.single("bill_image"),
   update_warranty
+);
+
+warrantyRouter.put(
+  "/deleteWarranty/:id",
+  authenticate,
+  authorizeRoles([Role.USER]),
+  delete_warranty
 );
 export default warrantyRouter;

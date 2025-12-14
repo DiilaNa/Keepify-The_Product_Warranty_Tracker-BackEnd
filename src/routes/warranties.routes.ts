@@ -4,7 +4,7 @@ import { authorizeRoles } from "../middleware/roles";
 import { Role } from "../model/User";
 import { delete_warranty, save_warranty, update_warranty } from "../controller/popups.user/warranty.controller";
 import {upload} from "../middleware/upload"
-import { getWarrantyDashboardStats, loadWarrantyPosts, searchWarranties } from "../controller/user.controller";
+import { getWarrantyDashboardStats, loadWarrantyPosts } from "../controller/user.controller";
 import { viewWarranty } from "../controller/popups.user/viewBill.controller";
 
 const warrantyRouter = Router();
@@ -19,7 +19,6 @@ warrantyRouter.post(
 warrantyRouter.get("/loadwarranties",authenticate,authorizeRoles([Role.USER]),loadWarrantyPosts)
 warrantyRouter.get("/view/:id", authenticate, authorizeRoles([Role.USER]),viewWarranty);
 warrantyRouter.get("/dashboard-stats", authenticate, authorizeRoles([Role.USER]), getWarrantyDashboardStats);
-warrantyRouter.get("/search", authenticate, authorizeRoles([Role.USER]), searchWarranties)
 warrantyRouter.put(
   "/updateWarranty/:id",
   authenticate,

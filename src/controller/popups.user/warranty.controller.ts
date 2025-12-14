@@ -98,7 +98,6 @@ export const get_brands_by_category = async (
     });
   }
 };
-
 export const update_warranty = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
@@ -106,15 +105,8 @@ export const update_warranty = async (req: AuthRequest, res: Response) => {
     }
 
     const { id } = req.params;
-    const {
-      name,
-      purchase_date,
-      expiry_date,
-      description,
-      serial_number,
-      category,
-      brandId,
-    } = req.body;
+    const { name, purchase_date, expiry_date, description, serial_number } =
+      req.body;
 
     const warranty = await Warranty.findOne({
       _id: id,
@@ -126,12 +118,13 @@ export const update_warranty = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "Warranty not found" });
     }
 
+    /* ---------- Handle bill image upload ---------- */
     if (req.file) {
       const uploadResult: any = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "warranties" },
           (error, result) => {
-            if (error) reject(error);
+            if (error) return reject(error);
             resolve(result);
           }
         );
@@ -141,22 +134,29 @@ export const update_warranty = async (req: AuthRequest, res: Response) => {
       warranty.bill_image = uploadResult.secure_url;
     }
 
+    /* ---------- Update fields safely ---------- */
     warranty.name = name ?? warranty.name;
     warranty.purchase_date = purchase_date ?? warranty.purchase_date;
     warranty.expiry_date = expiry_date ?? warranty.expiry_date;
     warranty.description = description ?? warranty.description;
     warranty.serial_number = serial_number ?? warranty.serial_number;
-    warranty.category = category ?? warranty.category;
-    warranty.brandId = brandId ?? warranty.brandId;
 
     await warranty.save();
 
+    /* ---------- 🔥 POPULATE BEFORE RESPONSE ---------- */
+    const populatedWarranty = await Warranty.findById(warranty._id)
+      .populate("category")
+      .populate("brandId");
+
     res.json({
       message: "Warranty updated successfully",
-      data: warranty,
+      data: populatedWarranty,
     });
   } catch (error: any) {
-    res.status(500).json({ message: "Update failed", error: error.message });
+    res.status(500).json({
+      message: "Update failed",
+      error: error.message,
+    });
   }
 };
 

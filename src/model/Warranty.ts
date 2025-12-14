@@ -2,7 +2,8 @@ import mongoose, { Schema } from "mongoose";
 
 export enum WarrantyStatus{
     ACTIVE = "ACTIVE",
-    EXPIRED = "EXPIRED"
+    EXPIRED = "EXPIRED",
+    DELETED = "DELETED"
 }
 
 export interface IWarranty extends Document{

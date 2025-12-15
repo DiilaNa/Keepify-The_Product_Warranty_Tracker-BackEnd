@@ -46,7 +46,7 @@ export const editAnnouncements = async(req: AuthRequest, res: Response) => {
 
         const { title, content, status, category } = req.body;
 
-        const categoryDoc = await Category.findOne({ name: category });
+        const categoryDoc = await Category.findById(category);
 
         if (!categoryDoc) {
             return res.status(400).json({ 

@@ -10,7 +10,7 @@ export const save_announcement = async(req:AuthRequest,res:Response) => {
             return res.status(401).json({message:"Unauthorized"})
         }
 
-        const {title, content, category} = req.body
+        const { title, description, category } = req.body;
         let imageURl = "";
 
         if(req.file){
@@ -36,13 +36,13 @@ export const save_announcement = async(req:AuthRequest,res:Response) => {
             }
 
         const newAnnouncement = new Announcement({
-            title,
-            content,
-            status: AnnouncementStatus.PUBLISHED,
-            img_url: imageURl,
-            ownerId:req.user.sub,
-            category: categoryDoc._id
-        })
+          title,
+          description,
+          status: AnnouncementStatus.PUBLISHED,
+          img_url: imageURl,
+          ownerId: req.user.sub,
+          category: categoryDoc._id,
+        });
 
         await newAnnouncement.save();
 

@@ -72,7 +72,7 @@ export const editAnnouncements = async(req: AuthRequest, res: Response) => {
         }
 
         existing.title = title ?? existing.title;
-        existing.content = content ?? existing.content;
+        existing.description = content ?? existing.description;
         existing.status = status ?? existing.status;
         existing.category = categoryDoc._id ?? existing.category;
         existing.img_url = imageURL;

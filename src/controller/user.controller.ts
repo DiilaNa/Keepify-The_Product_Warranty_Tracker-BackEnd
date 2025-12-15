@@ -49,7 +49,6 @@ export const loadWarrantyPosts = async (req: AuthRequest, res: Response) => {
   }
 };
   
-
 export const getWarrantyDashboardStats = async (req: AuthRequest, res: Response) => {
     try {
         const ownerId = req.user.sub 

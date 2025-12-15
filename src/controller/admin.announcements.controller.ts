@@ -10,13 +10,17 @@ export const loadAdminAnnouncements = async(req: AuthRequest, res: Response) => 
         const limit = parseInt(req.query.limit as string) || 10;
         const skip = (page - 1) * limit;
 
-        const posts = await Announcement.find()
-        .populate("category","name")
-        .sort({createdAt: -1})
-        .skip(skip)
-        .limit(limit);
+        const posts = await Announcement.find({
+          $in: ["PUBLISHED", "UNPUBLISHED"],
+        })
+          .populate("category", "name")
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit);
 
-        const total = await Announcement.countDocuments();
+        const total = await Announcement.countDocuments({
+          status: { $in: ["PUBLISHED", "UNPUBLISHED"] },
+        });
         const totalPages = Math.ceil(total / limit);
         
         res.status(200).json({
@@ -120,3 +124,31 @@ export const updateAnnouncementStatus = async (req: AuthRequest, res: Response) 
         });
     }
 };
+
+export const deleteAnnouncementStatus =async(req:AuthRequest, res:Response) => {
+    try{
+        const announcementId = req.params.id;
+
+        const existing = await Announcement.findById(announcementId);
+        if (!existing) {
+          return res.status(404).json({
+            message: "Announcement not found",
+          });
+        }
+
+        existing.status = AnnouncementStatus.DELETED
+        await existing.save();
+
+        res.status(200).json({
+          message: `Announcement is now Deleted}`,
+          data: existing,
+        });
+
+
+    }catch(error:any){
+        res.status(500).json({
+          message: "Error deleting announcement status",
+          error: error.message,
+        });
+    }
+}

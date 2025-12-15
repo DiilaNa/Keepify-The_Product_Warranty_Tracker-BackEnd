@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export enum AnnouncementStatus{
     PUBLISHED = "PUBLISHED",
     UNPUBLISHED = "UNPUBLISHED",
+    DELETED = "DELETED"
 }
 
 export interface IAnnouncement extends Document {

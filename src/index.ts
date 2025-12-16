@@ -2,7 +2,6 @@ import express from "express";
 import mongoose from "mongoose";
 import { log, error } from "console";
 import dotenv from "dotenv";
-import cors from "cors";
 import auth from "./routes/auth.routes";
 import announcementsRouter from "./routes/announcements.routes";
 import categoriesRouter from "./routes/category.routes";
@@ -10,14 +9,12 @@ import brandsRouter from "./routes/brands.routes";
 import warrantyRouter from "./routes/warranties.routes";
 import notificationRouter from "./routes/notification.routes";
 import cronRouter from "./routes/cron.routes";
-
+import cors from "cors"
 dotenv.config();
 
 const MONGO_URI = process.env.MONGO_URI as string;
 
 const app = express();
-
-app.use(express.json());
 
 app.use(
   cors({
@@ -27,7 +24,7 @@ app.use(
   })
 );
 
-app.options("*", cors());
+app.use(express.json());
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/announcements", announcementsRouter);

@@ -27,6 +27,10 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.send("API is running ...");
+});
+
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/announcements", announcementsRouter);
 app.use("/api/v1/categories", categoriesRouter);

@@ -24,6 +24,7 @@ app.use(
   cors({
     origin: ["https://keepify-the-product-warranty-tracke.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );

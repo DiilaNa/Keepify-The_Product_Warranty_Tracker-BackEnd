@@ -22,10 +22,13 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["https://keepify-the-product-warranty-tracke.vercel.app"],
+    origin: "https://keepify-the-product-warranty-tracke.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.options("*", cors());
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/announcements", announcementsRouter);

@@ -1,7 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
-import { log, error } from "console";
 import dotenv from "dotenv";
+import cors from "cors";
+
 import auth from "./routes/auth.routes";
 import announcementsRouter from "./routes/announcements.routes";
 import categoriesRouter from "./routes/category.routes";
@@ -9,10 +10,8 @@ import brandsRouter from "./routes/brands.routes";
 import warrantyRouter from "./routes/warranties.routes";
 import notificationRouter from "./routes/notification.routes";
 import cronRouter from "./routes/cron.routes";
-import cors from "cors"
-dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI as string;
+dotenv.config();
 
 const app = express();
 
@@ -21,8 +20,11 @@ app.use(
     origin: "https://keepify-the-product-warranty-tracke.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
+
+app.options("*", cors());
 
 app.use(express.json());
 
@@ -34,13 +36,6 @@ app.use("/api/v1/warranties", warrantyRouter);
 app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/cron", cronRouter);
 
+mongoose.connect(process.env.MONGO_URI as string);
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    log("DB Connected");
-  })
-  .catch((err) => {
-    error(err);
-    process.exit(1);
-  });
+export default app;

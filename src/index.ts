@@ -13,7 +13,6 @@ import cronRouter from "./routes/cron.routes";
 
 dotenv.config();
 
-const SERVER_PORT = process.env.SERVER_PORT;
 const MONGO_URI = process.env.MONGO_URI as string;
 
 const app = express();
@@ -48,7 +47,3 @@ mongoose
     error(err);
     process.exit(1);
   });
-
-app.listen(SERVER_PORT, () => {
-  console.log(`Server running on port ${SERVER_PORT}`);
-});

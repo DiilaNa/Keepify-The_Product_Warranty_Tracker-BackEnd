@@ -9,6 +9,7 @@ import categoriesRouter from "./routes/category.routes";
 import brandsRouter from "./routes/brands.routes";
 import warrantyRouter from "./routes/warranties.routes";
 import notificationRouter from "./routes/notification.routes";
+import cronRouter from "./routes/cron.routes";
 
 dotenv.config();
 
@@ -32,6 +33,8 @@ app.use("/api/v1/categories", categoriesRouter);
 app.use("/api/v1/brands", brandsRouter);
 app.use("/api/v1/warranties", warrantyRouter);
 app.use("/api/v1/notifications", notificationRouter);
+app.use("/api/v1/cron", cronRouter);
+
 
 mongoose
   .connect(MONGO_URI)

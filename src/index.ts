@@ -1,4 +1,4 @@
-import express from "express";
+import express, { request, response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -29,6 +29,10 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   })
 );
+
+app.get("/",(req,res) => {
+  res.send("Api is running ..")
+})
 
 
 app.use("/api/v1/auth", auth);

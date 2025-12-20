@@ -6,6 +6,7 @@ import { Brand } from "../model/Brand";
 import { Announcement } from "../model/Announcements";
 import { Role } from "../model/User";
 import { AnnouncementStatus } from "../model/Announcements";
+import { Warranty } from "../model/Warranty";
 
 export const loadUserDetails = async (req: AuthRequest, res: Response) => {
   try {
@@ -101,4 +102,49 @@ export const getAdminDashboardStats = async (req: AuthRequest, res: Response) =>
             message: "Server Error"
         });
     }
+};
+
+export const getWarrantiesLineChart = async (req: AuthRequest, res: Response) => {
+  try{
+    const stats = await Warranty.aggregate([
+      {
+        $group: {
+          _id: { $month: "$purchase_date" },
+          total: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.status(200).json({
+       message: "Successfully loaded warranties in line chart",
+       data:stats
+    });
+  }catch(err:any){
+    res.status(500).json({message:"server error"})
+  }
+}
+
+export const getTopBrandsBarChart = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const topProducts = await Warranty.aggregate([
+      {
+        $group: {
+          _id: "$name",
+          total: { $sum: 1 },
+        },
+      },
+      { $sort: { total: -1 } },
+      { $limit: 5 },
+    ]);
+    res.status(200).json({
+      message: "Successfully loaded top brands",
+      data: topProducts,
+    });
+  } catch (err: any) {
+    res.status(500).json({ message: "server error" });
+  }
 };

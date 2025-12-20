@@ -6,6 +6,7 @@ import { delete_warranty, save_warranty, update_warranty } from "../controller/p
 import {upload} from "../middleware/upload"
 import { getWarrantyDashboardStats, loadWarrantyPosts } from "../controller/user.controller";
 import { viewWarranty } from "../controller/popups.user/viewBill.controller";
+import { getTopBrandsBarChart, getWarrantiesLineChart } from "../controller/admin.controller";
 
 const warrantyRouter = Router();
 
@@ -33,4 +34,7 @@ warrantyRouter.put(
   authorizeRoles([Role.USER]),
   delete_warranty
 );
+
+warrantyRouter.get("warranties-overtime",authenticate,authorizeRoles([Role.ADMIN]),getWarrantiesLineChart);
+warrantyRouter.get("top-brands",authenticate,authorizeRoles([Role.ADMIN]),getTopBrandsBarChart);
 export default warrantyRouter;

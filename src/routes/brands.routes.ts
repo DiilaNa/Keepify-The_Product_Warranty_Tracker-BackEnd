@@ -4,6 +4,7 @@ import { authorizeRoles } from "../middleware/roles";
 import { Role } from "../model/User";
 import { save_brand } from "../controller/Popups.admin/brands.controller";
 import { get_brands_by_category } from "../controller/popups.user/warranty.controller";
+import { getTopBrandsBarChart } from "../controller/admin.controller";
 
 const brandsRouter = Router();
 
@@ -15,5 +16,13 @@ brandsRouter.get(
   authorizeRoles([Role.USER]),
   get_brands_by_category
 );
+
+brandsRouter.get(
+  "/top-brands",
+  authenticate,
+  authorizeRoles([Role.ADMIN]),
+  getTopBrandsBarChart
+);
+
 
 export default brandsRouter;

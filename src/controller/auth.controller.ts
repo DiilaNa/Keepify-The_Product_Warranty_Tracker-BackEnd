@@ -85,7 +85,7 @@ export const googleAuth = async (req: Request, res: Response) => {
         email,
         googleId: sub,
         avatar: picture,
-        role: "USER",
+        role: Role.USER,
         provider: "GOOGLE",
       });
     }
@@ -95,6 +95,7 @@ export const googleAuth = async (req: Request, res: Response) => {
 
     res.status(200).json({
       user,
+      role: user.role,
       accessToken,
       refreshToken,
     });

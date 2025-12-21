@@ -15,7 +15,6 @@ import { error, log } from "console";
 dotenv.config();
 
 const MONGO_URI = process.env.MONGO_URI as string;
-const SERVER_PORT = process.env.SERVER_PORT;
 
 const app = express();
 app.use(express.json());
@@ -30,10 +29,9 @@ app.use(
   })
 );
 
-app.get("/",(_req,res) => {
-  res.send("Api is running ..")
-})
-
+app.get("/", (_req, res) => {
+  res.send("API is running ..");
+});
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/announcements", announcementsRouter);
@@ -53,6 +51,4 @@ mongoose
     process.exit(1);
   });
 
-  app.listen(SERVER_PORT, () => {
-    log(`Server is running on ${SERVER_PORT}`);
-  });
+export default app;

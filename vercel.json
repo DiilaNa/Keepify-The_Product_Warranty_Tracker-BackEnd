@@ -2,8 +2,7 @@
   "crons": [
     {
       "path": "/api/v1/cron/run-expiry-check",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
-

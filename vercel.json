@@ -1,15 +1,9 @@
 {
-  "version": 2,
-  "builds": [
+  "crons": [
     {
-      "src": "src/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "src/index.ts"
+      "path": "/api/v1/cron/run-expiry-check",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
+

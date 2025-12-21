@@ -5,8 +5,10 @@ import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "../utils/token";
 import jwt from "jsonwebtoken"
 import { AuthRequest } from "../middleware/auth";
+import { OAuth2Client } from "google-auth-library";
 
 dotenv.config()
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const JWT_REFRESH = process.env.JWT_REFRESH as string
 
@@ -59,6 +61,48 @@ export const register = async(req:Request,res:Response) =>{
     }
 }
 
+export const googleAuth = async (req: Request, res: Response) => {
+  try {
+    const { credential } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload)
+      return res.status(401).json({ message: "Invalid Google token" });
+
+    const { email, given_name, family_name, sub, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        firstname: given_name,
+        lastname: family_name,
+        email,
+        googleId: sub,
+        avatar: picture,
+        role: "USER",
+        provider: "GOOGLE",
+      });
+    }
+
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+
+    res.status(200).json({
+      user,
+      accessToken,
+      refreshToken,
+    });
+  } catch (err: any) {
+    res.status(500).json({ message: `Google authentication failed ${err}`, error: err });
+  }
+};
+
 export const login = async(req: Request,res:Response) =>{
     try{
         const {email, password} = req.body;
@@ -69,7 +113,7 @@ export const login = async(req: Request,res:Response) =>{
             return res.status(401).json({message:"Invalid credentials"})
         }
 
-        const valid = await bcrypt.compare(password,existingUser.password)
+        const valid = await bcrypt.compare(password,existingUser.password as string)
 
         if(!valid){
             return res.status(401).json({message:"Invalid credentials"})
@@ -161,3 +205,5 @@ export const adminRegister = async(req:AuthRequest,res:Response) => {
         res.status(500).json({message: "Server Error",error: err.message})
     }
 }
+
+

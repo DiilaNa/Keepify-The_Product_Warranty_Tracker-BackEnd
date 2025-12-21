@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "index.ts": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "crons": [
     {
       "path": "/api/v1/cron/run-expiry-check",

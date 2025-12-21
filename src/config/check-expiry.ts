@@ -1,4 +1,4 @@
-import { Warranty } from "../model/Warranty";
+import { Warranty, WarrantyStatus } from "../model/Warranty";
 import { Notification, NotificationType } from "../model/Notification";
 import { sendEmail } from "../utils/sendEmail";
 import dayjs from "dayjs";
@@ -16,6 +16,7 @@ export const checkExpiryNotifications = async () => {
             let title = "";
             let message = "";
             let type: NotificationType | null = null;
+            let warrantyStatus: WarrantyStatus | null = null;
 
             if (diffDays === 30) {
                 title = "Warranty expires in 1 month";
@@ -33,6 +34,7 @@ export const checkExpiryNotifications = async () => {
                 title = "Warranty expires today";
                 message = `Your warranty for ${warranty.name} expires today.`;
                 type = NotificationType.EXPIRED;
+                warrantyStatus = WarrantyStatus.EXPIRED;
             } else if (diffDays === -1) {
                 title = "Warranty expired yesterday";
                 message = `Your warranty for ${warranty.name} expired yesterday.`;
@@ -48,18 +50,23 @@ export const checkExpiryNotifications = async () => {
             });
 
             if (!exists) {
-                await Notification.create({
-                    title,
-                    message,
-                    type,
-                    userId: warranty.ownerId._id,
-                    warrantyId: warranty._id,
-                });
+              await Notification.create({
+                title,
+                message,
+                type,
+                userId: warranty.ownerId._id,
+                warrantyId: warranty._id,
+              });
 
-            const userEmail = warranty.ownerId.email;
-                if (userEmail) {
-                    await sendEmail(userEmail, title, `<p>${message}</p>`);
-                }
+              if (diffDays <= 0 && warranty.status !== WarrantyStatus.EXPIRED) {
+                warranty.status = WarrantyStatus.EXPIRED;
+                await warranty.save();
+              }
+
+              const userEmail = warranty.ownerId.email;
+              if (userEmail) {
+                await sendEmail(userEmail, title, `<p>${message}</p>`);
+              }
             }
         }
     console.log("Expiry check complete");

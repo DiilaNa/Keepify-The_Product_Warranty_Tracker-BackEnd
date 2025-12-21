@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { Warranty } from "../model/Warranty";
+import { Warranty, WarrantyStatus } from "../model/Warranty";
 import { AuthRequest } from "../middleware/auth";
 import { Notification } from "../model/Notification";
 
@@ -12,7 +12,7 @@ export const loadWarrantyPosts = async (req: AuthRequest, res: Response) => {
 
     const filter: any = {
       ownerId: req.user.sub,
-      status: "ACTIVE",
+      status: { $in: [WarrantyStatus.ACTIVE, WarrantyStatus.EXPIRED] },
     };
 
     if (search) {
@@ -62,26 +62,25 @@ export const getWarrantyDashboardStats = async (req: AuthRequest, res: Response)
         const next7Days = new Date();
         next7Days.setDate(next7Days.getDate() + 7);
 
-        const baseFilter = { ownerId, status: "ACTIVE" };
+        const baseFilter = { ownerId, status: [WarrantyStatus.ACTIVE,WarrantyStatus.EXPIRED] };
 
         const totalWarranties = await Warranty.countDocuments(baseFilter);
 
         const expiringThisMonth = await Warranty.countDocuments({
             ownerId,
-            status: "ACTIVE",
+            status: WarrantyStatus.ACTIVE,
             expiry_date: { $gte: startOfMonth, $lte: endOfMonth }
         });
 
         const expiringNext7Days = await Warranty.countDocuments({
           ownerId,
-          status: "ACTIVE",
+          status: WarrantyStatus.ACTIVE,
           expiry_date: { $gte: now, $lte: next7Days },
         });
 
         const alreadyExpired = await Warranty.countDocuments({
           ownerId,
-          status: "EXPIRED",
-          expiry_date: { $lt: now },
+          status: WarrantyStatus.EXPIRED,
         });
 
         return res.status(200).json({

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { adminRegister, googleAuth, handleRefreshToken, login, register } from "../controller/auth.controller";
+import { adminRegister, getCurrentUser, googleAuth, handleRefreshToken, login, register } from "../controller/auth.controller";
 import { authenticate } from "../middleware/auth";
 import { authorizeRoles } from "../middleware/roles";
 import { Role } from "../model/User";
@@ -13,6 +13,7 @@ router.post("/login",login)
 router.post("/refresh",handleRefreshToken)
 // routes/auth.ts
 router.post("/google", googleAuth);
+router.get("/me",authenticate,authorizeRoles([Role.USER,Role.ADMIN]),getCurrentUser)
 
 
 // protected as admin only

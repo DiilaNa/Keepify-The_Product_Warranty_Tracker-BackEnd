@@ -96,6 +96,7 @@ export const googleAuth = async (req: Request, res: Response) => {
     res.status(200).json({
       user,
       role: user.role,
+      email: user.email,
       accessToken,
       refreshToken,
     });

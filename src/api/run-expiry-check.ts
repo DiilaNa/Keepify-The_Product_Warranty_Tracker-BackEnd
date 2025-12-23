@@ -2,23 +2,23 @@ import { Request, Response } from "express";
 import { checkExpiryNotifications } from "../config/check-expiry";
 import { sendEmail } from "../utils/sendEmail";
 
-const CRON_SECRET = process.env.CRON_SECRET;
-
 export const runExpiryCheck = async (req: Request, res: Response) => {
   try {
-    const token = req.headers["x-cron-token"];
+    const userAgent = req.headers["user-agent"];
 
-    if (!token || token !== CRON_SECRET) {
+    if (!userAgent || !userAgent.includes("Vercel")) {
       return res.status(403).json({
         success: false,
-        message: "Forbidden – invalid cron token",
+        message: "Forbidden – not a Vercel cron",
       });
     }
+
+    console.log("CRON JOB TRIGGERED:", new Date().toISOString());
 
     await checkExpiryNotifications();
 
     await sendEmail(
-      "liyanaarachchidilan@gmail.com", 
+      "liyanaarachchidilan@gmail.com",
       "Keepify Cron Job Test",
       `<p>The expiry check cron ran successfully at ${new Date().toLocaleString()}</p>`
     );
@@ -29,11 +29,7 @@ export const runExpiryCheck = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Cron error:", error);
-    await sendEmail(
-      "liyanaarachchidilan@gmail.com",
-      "Keepify Cron Job Test Failed",
-      `<p>The expiry check cron failed at ${new Date().toLocaleString()}</p>`
-    );
+
     return res.status(500).json({
       success: false,
       message: "Cron failed",

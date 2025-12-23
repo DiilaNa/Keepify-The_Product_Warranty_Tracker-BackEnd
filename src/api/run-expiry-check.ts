@@ -4,17 +4,16 @@ import { sendEmail } from "../utils/sendEmail";
 
 export const runExpiryCheck = async (req: Request, res: Response) => {
   try {
-    const userAgent = req.headers["user-agent"];
+    const authHeader = req.headers["authorization"];
 
-    if (!userAgent || !userAgent.includes("Vercel")) {
-      return res.status(403).json({
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return res.status(401).json({
         success: false,
-        message: "Forbidden – not a Vercel cron",
+        message: "Unauthorized",
       });
     }
 
     console.log("CRON JOB TRIGGERED:", new Date().toISOString());
-
     await checkExpiryNotifications();
 
     await sendEmail(

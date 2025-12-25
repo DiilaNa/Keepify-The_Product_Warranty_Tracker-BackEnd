@@ -125,26 +125,69 @@ export const getWarrantiesLineChart = async (req: AuthRequest, res: Response) =>
   }
 }
 
-export const getTopBrandsBarChart = async (
-  req: AuthRequest,
-  res: Response
-) => {
+export const getTopBrandsBarChart = async (req: AuthRequest, res: Response) => {
   try {
-    const topProducts = await Warranty.aggregate([
+    const topBrands = await Warranty.aggregate([
       {
         $group: {
-          _id: "$name",
+          _id: "$brandId",
           total: { $sum: 1 },
         },
       },
+
+      {
+        $lookup: {
+          from: "brands",
+          localField: "_id",
+          foreignField: "_id",
+          as: "brand",
+        },
+      },
+
+      { $unwind: "$brand" },
+
+      {
+        $project: {
+          _id: 0,
+          brandName: "$brand.brand_name",
+          total: 1,
+        },
+      },
+
       { $sort: { total: -1 } },
       { $limit: 5 },
     ]);
+
     res.status(200).json({
       message: "Successfully loaded top brands",
-      data: topProducts,
+      data: topBrands,
     });
-  } catch (err: any) {
-    res.status(500).json({ message: "server error" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// export const getTopBrandsBarChart = async (
+//   req: AuthRequest,
+//   res: Response
+// ) => {
+//   try {
+//     const topProducts = await Warranty.aggregate([
+//       {
+//         $group: {
+//           _id: "$brandId",
+//           total: { $sum: 1 },
+//         },
+//       },
+//       { $sort: { total: -1 } },
+//       { $limit: 5 },
+//     ]);
+//     res.status(200).json({
+//       message: "Successfully loaded top brands",
+//       data: topProducts,
+//     });
+//   } catch (err: any) {
+//     res.status(500).json({ message: "server error" });
+//   }
+// };

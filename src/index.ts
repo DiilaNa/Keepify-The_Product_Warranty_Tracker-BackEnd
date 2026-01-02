@@ -26,6 +26,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://keepify-the-product-warranty-tracke.vercel.app",
+      "https://keepify.space",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   })

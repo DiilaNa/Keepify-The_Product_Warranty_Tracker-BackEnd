@@ -104,26 +104,45 @@ export const getAdminDashboardStats = async (req: AuthRequest, res: Response) =>
     }
 };
 
-export const getWarrantiesLineChart = async (req: AuthRequest, res: Response) => {
-  try{
+export const getWarrantiesLineChart = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
     const stats = await Warranty.aggregate([
       {
         $group: {
-          _id: { $month: "$purchase_date" },
+          _id: {
+            year: { $year: "$purchase_date" },
+            month: { $month: "$purchase_date" },
+          },
           total: { $sum: 1 },
         },
       },
-      { $sort: { _id: 1 } },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          month: "$_id.month",
+          total: 1,
+        },
+      },
     ]);
 
     res.status(200).json({
-       message: "Successfully loaded warranties in line chart",
-       data:stats
+      message: "Successfully loaded warranties in line chart",
+      data: stats,
     });
-  }catch(err:any){
-    res.status(500).json({message:"server error"})
+  } catch (err: any) {
+    res.status(500).json({ message: "server error" });
   }
-}
+};
 
 export const getTopBrandsBarChart = async (req: AuthRequest, res: Response) => {
   try {
@@ -166,28 +185,3 @@ export const getTopBrandsBarChart = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
-// export const getTopBrandsBarChart = async (
-//   req: AuthRequest,
-//   res: Response
-// ) => {
-//   try {
-//     const topProducts = await Warranty.aggregate([
-//       {
-//         $group: {
-//           _id: "$brandId",
-//           total: { $sum: 1 },
-//         },
-//       },
-//       { $sort: { total: -1 } },
-//       { $limit: 5 },
-//     ]);
-//     res.status(200).json({
-//       message: "Successfully loaded top brands",
-//       data: topProducts,
-//     });
-//   } catch (err: any) {
-//     res.status(500).json({ message: "server error" });
-//   }
-// };
